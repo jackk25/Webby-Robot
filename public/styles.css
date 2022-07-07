@@ -1,0 +1,51 @@
+body {
+    background-color: #06283D;
+}
+
+button {
+    font-family: "Ubuntu";
+    background-color:#47B5FF;
+    border: 0ch;
+}
+
+.debug {
+    font-family: "Ubuntu";
+    color: #DFF6FF;
+    background-color: darkslateblue;
+}
+
+.header {
+    color: #DFF6FF;
+    font-family: "Ubuntu";
+    display: flex;
+    justify-content: center;
+}
+
+.mainContent {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.controller {
+    display: flex;
+}
+
+ion-icon {
+    font-size: 128px;
+    color: #47B5FF;
+}
+
+#gyroEnable {
+    display: none;
+}
+
+input[type=range][orient=vertical]
+{
+    writing-mode: bt-lr; /* IE */
+    -webkit-appearance: slider-vertical; /* Chromium */
+    width: 8px;
+    height: 175px;
+    padding: 0 5px;
+}
