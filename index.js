@@ -26,13 +26,14 @@ app.get('/', (request, repsonse) => {
 io.on('connection', (socket) => {
     console.log("User Connected!")
     socket.on('controllerContent', (msg) => {
-        if(msg[0] > 0){
+        /* if(msg[0] > 0){
             led.pwmWrite(255);
         } else if (msg[0] < 0){
             led.pwmWrite(50);
         } else {
             led.digitalWrite(0);
-        }
+        } */
+        led.pwmWrite(msg[1]);
     });
     socket.on('disconnect', () => {
         console.log('User Disconnected!')

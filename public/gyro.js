@@ -4,7 +4,7 @@ var debugText = document.querySelector("#debugText");
 
 deadzoneNum = Number(deadzoneNum);
 
-function enableGryo(){
+function enableGyro(){
   try {
     gyro = new AbsoluteOrientationSensor({ frequency: 10 });
     gyro.onerror = (event) => {
