@@ -46,12 +46,14 @@ class RobotButton {
         window.addEventListener("keydown", (event) => {
             if(event.key === this.keyboardKey) {
                 this.click = 100 * pressMultiplier;
+                this.webButton.style.opacity = 0.5;
             }
         });
 
         document.addEventListener("keyup", (event) => {
             if(event.key === this.keyboardKey) {
                 this.click = 0;
+                this.webButton.style.opacity = 1;
             }
         });
     }
@@ -115,8 +117,7 @@ setInterval(() => {
     if(controlSwitchUI.checked){
         turn = gyroTurn;
     } else {
-        //FIX ME !!!
-        turn = lClick + rClick;
+        turn = leftBtn.click + rightBtn.click;
     }
 
     console.log(turn);

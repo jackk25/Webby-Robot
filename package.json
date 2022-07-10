@@ -1,5 +1,5 @@
 {
-  "name": "node-website",
+  "name": "webby-robot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "express": "^4.18.1",
     "pigpio": "^3.3.1",
