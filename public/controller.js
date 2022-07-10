@@ -1,54 +1,71 @@
-var left = document.getElementById("leftBtn");
-var right = document.getElementById("rightBtn");
-var throttle = document.getElementById("throttleSlider");
+//UI Elements
 
-controlModeSwitch.addEventListener("click",() => {
-    if (controlModeSwitch.checked) {
+var leftUI = document.getElementById("leftBtn");
+var rightUI = document.getElementById("rightBtn");
+var gyroUI = document.getElementById("gyroEnable");
+var throttleUI = document.getElementById("throttleSlider");
+var controlSwitchUI = document.querySelector("body > div.mainContent > label > input[type=checkbox]");
+
+var debugText = document.querySelector("#debugText");
+
+// Websocket
+var socket = io();
+
+//Toggle Gryo Visuals
+
+controlSwitchUI.addEventListener("click",() => {
+    if (controlSwitchUI.checked) {
         console.log("Enabling Gyro!");
-        gyroIcon.style.display = "block";
-        left.style.display = "none";
-        right.style.display = "none";
+        gyroUI.style.display = "block";
+        leftUI.style.display = "none";
+        rightUI.style.display = "none";
     } else {
         console.log("Enabling D-Pad!");
-        gyroIcon.style.display = "none";
-        left.style.display = "block";
-        right.style.display = "block";
+        gyroUI.style.display = "none";
+        leftUI.style.display = "block";
+        rightUI.style.display = "block";
     }
 });
 
+// Button Control Logic
 
-var socket = io();
+class RobotButton {
+    constructor(pressMultiplier, webButton, keyboardKey) {
+        this.click = 0;
+        this.webButton = webButton;
+        this.keyboardKey = keyboardKey;
 
-var lClick =  0;
-var rClick = 0;
+        webButton.addEventListener("mousedown", () => {
+            this.click = 100 * pressMultiplier;
+        });
 
+        webButton.addEventListener("mouseup", () => {
+            this.click = 0;
+        });
 
-left.addEventListener('mousedown', () => {
-    lClick = -100;
-});
+        window.addEventListener("keydown", (event) => {
+            if(event.key === this.keyboardKey) {
+                this.click = 100 * pressMultiplier;
+            }
+        });
 
-left.addEventListener('mouseup', () => {
-    lClick = 0;
-});
+        document.addEventListener("keyup", (event) => {
+            if(event.key === this.keyboardKey) {
+                this.click = 0;
+            }
+        });
+    }
+}
 
-right.addEventListener('mousedown', () => {
-    rClick = 100;
-});
+const leftBtn = new RobotButton(-1, leftUI, "a");
+const rightBtn = new RobotButton(1, rightUI, "d");
 
-right.addEventListener('mouseup', () => {
-    rClick = 0;
-});
+// Gryo Control Logic
 
-var deadzoneNum = document.querySelector("#deadzoneValue").value;
+let deadzoneNum = 0.1;
 var orient = null;
-var debugText = document.querySelector("#debugText");
 
-let maxGyroLeftTurn = 0.7;
-let maxGyroRightTurn = 0.18;
-
-let turn = lClick + rClick;
-
-deadzoneNum = Number(deadzoneNum);
+let gyroTurn = 0;
 
 try {
     orient = new AbsoluteOrientationSensor({ frequency: 10 });
@@ -63,20 +80,22 @@ try {
         }
     };
     orient.onreading = (e) => {
-        // console.log(e.currentTarget.quaternion[2]);
-        if (controlModeSwitch.checked) {
+        // Remove me !!!
+        if (controlSwitchUI.checked) {
             var betaRotation = e.currentTarget.quaternion[2]
 
             if(betaRotation >= 0.5 + deadzoneNum){
                 console.log("Turning Left!");
-                turn = 100;
+                gyroTurn = 100;
     
             } else if (betaRotation <= 0.5 - deadzoneNum) {
                 console.log("Turning Right!");
-                turn = -100.
+                gyroTurn = -100;
             }
             
             debugText.textContent = betaRotation;
+        }
+        else {
         }
     };
     orient.start();
@@ -93,11 +112,17 @@ try {
 }
 
 setInterval(() => {
+    if(controlSwitchUI.checked){
+        turn = gyroTurn;
+    } else {
+        //FIX ME !!!
+        turn = lClick + rClick;
+    }
+
     console.log(turn);
+
     socket.emit('controllerContent', [
         turn,
-        throttle.value
+        throttleUI.value
     ]);
 }, 200);
-
-

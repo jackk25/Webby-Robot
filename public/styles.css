@@ -19,6 +19,8 @@ button {
     font-family: "Ubuntu";
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 .mainContent {
@@ -35,6 +37,11 @@ button {
 ion-icon {
     font-size: 128px;
     color: #47B5FF;
+    opacity: 1;
+}
+
+ion-icon:active {
+    opacity: 0.5;
 }
 
 #gyroEnable {
