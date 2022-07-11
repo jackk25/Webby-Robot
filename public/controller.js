@@ -29,34 +29,32 @@ controlSwitchUI.addEventListener("click",() => {
 
 // Button Control Logic
 
-class RobotButton {
-    constructor(pressMultiplier, webButton, keyboardKey) {
+function RobotButton(pressMultiplier, webButton, keyboardKey) {
+    this.click = 0;
+    this.webButton = webButton;
+    this.keyboardKey = keyboardKey;
+
+    webButton.addEventListener("pointerdown", () => {
+        this.click = 100 * pressMultiplier;
+    });
+
+    webButton.addEventListener("pointerup", () => {
         this.click = 0;
-        this.webButton = webButton;
-        this.keyboardKey = keyboardKey;
+    });
 
-        webButton.addEventListener("mousedown", () => {
+    window.addEventListener("keydown", (event) => {
+        if(event.key === this.keyboardKey) {
             this.click = 100 * pressMultiplier;
-        });
+            this.webButton.style.opacity = 0.5;
+        }
+    });
 
-        webButton.addEventListener("mouseup", () => {
+    document.addEventListener("keyup", (event) => {
+        if(event.key === this.keyboardKey) {
             this.click = 0;
-        });
-
-        window.addEventListener("keydown", (event) => {
-            if(event.key === this.keyboardKey) {
-                this.click = 100 * pressMultiplier;
-                this.webButton.style.opacity = 0.5;
-            }
-        });
-
-        document.addEventListener("keyup", (event) => {
-            if(event.key === this.keyboardKey) {
-                this.click = 0;
-                this.webButton.style.opacity = 1;
-            }
-        });
-    }
+            this.webButton.style.opacity = 1;
+        }
+    });
 }
 
 const leftBtn = new RobotButton(-1, leftUI, "a");
@@ -64,54 +62,21 @@ const rightBtn = new RobotButton(1, rightUI, "d");
 
 // Gryo Control Logic
 
-let deadzoneNum = 0.1;
-var orient = null;
-
+let deadzoneNum = 5;
 let gyroTurn = 0;
 
-try {
-    orient = new AbsoluteOrientationSensor({ frequency: 10 });
-    orient.onerror = (event) => {
-        // Handle runtime errors.
-        if (event.error.name === 'NotAllowedError') {
-            console.log('Permission to access sensor was denied.');
-            debugText.textContent = "Permission to access sensor was denied."
-        } else if (event.error.name === 'NotReadableError') {
-            console.log('Cannot connect to the sensor.');
-            debugText.textContent = 'Cannot connect to the sensor.'
-        }
-    };
-    orient.onreading = (e) => {
-        // Remove me !!!
-        if (controlSwitchUI.checked) {
-            var betaRotation = e.currentTarget.quaternion[2]
+let maxLeftTurn = 90;
+let maxRightTurn = -90;
 
-            if(betaRotation >= 0.5 + deadzoneNum){
-                console.log("Turning Left!");
-                gyroTurn = 100;
-    
-            } else if (betaRotation <= 0.5 - deadzoneNum) {
-                console.log("Turning Right!");
-                gyroTurn = -100;
-            }
-            
-            debugText.textContent = betaRotation;
-        }
-        else {
-        }
-    };
-    orient.start();
-    } catch (error) {
-        // Handle construction errors.
-        if (error.name === 'SecurityError') {
-            console.log('Sensor construction was blocked by the Permissions Policy.');
-        } else if (error.name === 'ReferenceError') {
-            console.log('Sensor is not supported by the User Agent.');
-            debugText.textContent = 'Sensor is not supported by the User Agent.'
-        } else {
-            throw error;
-        }
-}
+function handleGyro(event) {
+    var betaRotation = event.beta;
+    if(betaRotation <= -deadzoneNum || betaRotation >= deadzoneNum){
+        gyroTurn = Math.round((betaRotation / 90) * 100);
+        console.log(gyroTurn);
+    }
+};
+
+window.addEventListener("deviceorientation", handleGyro, true);
 
 setInterval(() => {
     if(controlSwitchUI.checked){
@@ -119,9 +84,7 @@ setInterval(() => {
     } else {
         turn = leftBtn.click + rightBtn.click;
     }
-
     console.log(turn);
-
     socket.emit('controllerContent', [
         turn,
         throttleUI.value

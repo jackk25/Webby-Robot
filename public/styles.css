@@ -32,15 +32,15 @@ button {
 
 .controller {
     display: flex;
+    color: #47B5FF;
+    font-size: 128px;
 }
 
-ion-icon {
-    font-size: 128px;
-    color: #47B5FF;
+.dpad {
     opacity: 1;
 }
 
-ion-icon:active {
+.dpad:active {
     opacity: 0.5;
 }
 

@@ -26,19 +26,12 @@ app.get('/', (request, repsonse) => {
 io.on('connection', (socket) => {
     console.log("User Connected!")
     socket.on('controllerContent', (msg) => {
-        /* if(msg[0] > 0){
-            led.pwmWrite(255);
-        } else if (msg[0] < 0){
-            led.pwmWrite(50);
-        } else {
-            led.digitalWrite(0);
-        } */
-        led.pwmWrite(msg[1]);
+        led.pwmWrite(Math.abs(msg[0]));
     });
     socket.on('disconnect', () => {
         console.log('User Disconnected!')
         led.digitalWrite(0);
     });
-  });
+});
 
 server.listen(process.env.PORT || 3000, () => console.log(`App avaiable on http://localhost:3000`));
