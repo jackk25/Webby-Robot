@@ -23,10 +23,20 @@ app.get('/', (request, repsonse) => {
     });
 });
 
+function wrapAround (val, cap){
+    if(val < 0){
+        val = Math.abs(val) + cap; 
+    }
+    return val;
+}
+
 io.on('connection', (socket) => {
     console.log("User Connected!")
     socket.on('controllerContent', (msg) => {
-        led.pwmWrite(Math.abs(msg[0]));
+        let turn = wrapAround(msg[0], 100);
+        let throttle = wrapAround(msg[1], 100);
+
+        led.pwmWrite(throttle);
     });
     socket.on('disconnect', () => {
         console.log('User Disconnected!')
