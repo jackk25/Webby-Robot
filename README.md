@@ -8,5 +8,5 @@ creation on the Raspberry Pi, the turn and drive speed is transmitted to a VEX V
 us to read numbers from the ports. These are then used to control the drive and turn speed of Webby.
 
 ## What is the current status of Webby?
-Webby's code is nearly complete, with only a few features, including fully incorporated gryo support, still in development. However, Webby's VEX frame is not assembled,
+Webby's code is functionally complete, with only final bug fixes for mobile being implemented. However, Webby's VEX frame is not assembled,
 as I currently do not have access to the parts. Webby's theorized frame is a modified H-Drive system to allow turning similar to a car's turning.
