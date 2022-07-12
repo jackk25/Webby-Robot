@@ -9,8 +9,11 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 
 const Gpio = require('pigpio').Gpio;
-const led = new Gpio(14, {mode: Gpio.OUTPUT});
+const turnLED = new Gpio(14, {mode: Gpio.OUTPUT});
+const throttleLED = new Gpio(15, {mode: Gpio.OUTPUT});
 
+turnLED.pwmRange(200);
+throttleLED.pwmRange(200);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -30,17 +33,25 @@ function wrapAround (val, cap){
     return val;
 }
 
+//MAX VEX NUMBER: 2702.
+
+function vexToVoltage(targetValue){
+    return targetValue / 819;
+}
+
 io.on('connection', (socket) => {
     console.log("User Connected!")
     socket.on('controllerContent', (msg) => {
         let turn = wrapAround(msg[0], 100);
         let throttle = wrapAround(msg[1], 100);
-
-        led.pwmWrite(throttle);
+        
+        turnLED.pwmWrite(turn);
+        throttleLED.pwmWrite(throttle);
     });
     socket.on('disconnect', () => {
         console.log('User Disconnected!')
-        led.digitalWrite(0);
+        turnLED.digitalWrite(0);
+        throttleLED.digitalWrite(0);
     });
 });
 

@@ -71,7 +71,7 @@ let maxRightTurn = -90;
 function handleGyro(event) {
     var betaRotation = event.beta;
     if(betaRotation <= -deadzoneNum || betaRotation >= deadzoneNum){
-        gyroTurn = Math.round((betaRotation / 90) * 100);
+        gyroTurn = Math.round((betaRotation / 180) * 100);
         console.log(gyroTurn);
     }
 };
