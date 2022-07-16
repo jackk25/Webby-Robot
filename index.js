@@ -12,8 +12,8 @@ const Gpio = require('pigpio').Gpio;
 const turnLED = new Gpio(14, {mode: Gpio.OUTPUT});
 const throttleLED = new Gpio(15, {mode: Gpio.OUTPUT});
 
-turnLED.pwmRange(200);
-throttleLED.pwmRange(200);
+turnLED.pwmRange(2000);
+throttleLED.pwmRange(2000);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -30,14 +30,10 @@ function wrapAround (val, cap){
     if(val < 0){
         val = Math.abs(val) + cap; 
     }
-    return val;
+    return val * 10;
 }
 
-//MAX VEX NUMBER: 2702.
-
-function vexToVoltage(targetValue){
-    return targetValue / 819;
-}
+//MAX VEX NUMBER: 2702
 
 io.on('connection', (socket) => {
     console.log("User Connected!")
