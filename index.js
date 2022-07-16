@@ -12,8 +12,8 @@ const Gpio = require('pigpio').Gpio;
 const turnLED = new Gpio(14, {mode: Gpio.OUTPUT});
 const throttleLED = new Gpio(15, {mode: Gpio.OUTPUT});
 
-turnLED.pwmRange(2000);
-throttleLED.pwmRange(2000);
+turnLED.pwmRange(2702);
+throttleLED.pwmRange(2702);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
